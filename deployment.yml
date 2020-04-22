@@ -1,0 +1,43 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: test-demo
+  labels:
+    app: test-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: test-demo
+    matchExpressions:
+      - {key: tier, operator: In, values: [test-demo]}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: test-demo
+        tier: test-demo
+    spec:
+      containers:
+        - name: test-demo
+          image: registry.cn-shenzhen.aliyuncs.com/soben/test-demo:v${CICD_EXECUTION_SEQUENCE}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-demo-nodeport
+spec:
+  # 服务如果想被外部调用，必须配置type.
+  type: NodePort
+  ports:
+    - port: 8080
+      name: test-demo-port
+  selector:
+    tier: test-demo

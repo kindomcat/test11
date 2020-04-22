@@ -1,0 +1,18 @@
+﻿stages:
+- name: compile
+  steps:
+  - runScriptConfig:
+      image: maven:3.6.0-jdk-8-alpine (Custom)
+      shellScript: mvn clean package -Dmaven.test.skip=true
+- name: publish
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./Dockerfile
+      buildContext: .
+      tag: demo:v:${CICD_EXECUTION_SEQUENCE}
+- name: deploy
+  steps:
+  - applyYamlConfig:
+      path: ./deployment.yaml
+timeout: 60
+notification: {}
