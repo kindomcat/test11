@@ -2,7 +2,7 @@
 - name: compile
   steps:
   - runScriptConfig:
-      image: maven:3.6.0-jdk-8-alpine (Custom)
+      image: maven:3-jdk-8
       shellScript: mvn clean package -Dmaven.test.skip=true
 - name: publish
   steps:
